@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'locations.dart' as locations;
 import 'dart:async';
 import 'Constants/constants.dart' as constants;
+import 'menu/custom_drawer.dart';
 import 'restaurant.dart';
 
 class MapsHomeScreen extends StatefulWidget {
@@ -11,8 +12,7 @@ class MapsHomeScreen extends StatefulWidget {
   _MapsHomeScreenState createState() => _MapsHomeScreenState();
 }
 
-
-const LatLng sourceLocation = LatLng(42.747932,-71.167889);
+const LatLng sourceLocation = LatLng(42.747932, -71.167889);
 
 class _MapsHomeScreenState extends State<MapsHomeScreen> {
   final Completer<GoogleMapController> _controller = Completer();
@@ -24,11 +24,14 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
   final Map<String, Marker> _markers = {};
 
   @override
-  initState(){
+  initState() {
     super.initState();
     location = Location();
 
-    location.changeSettings(interval: 100000,accuracy:LocationAccuracy.BALANCED,distanceFilter:2);
+    location.changeSettings(
+        interval: 100000,
+        accuracy: LocationAccuracy.BALANCED,
+        distanceFilter: 2);
     location.onLocationChanged().listen((LocationData cLoc) {
       // cLoc contains the lat and long of the
       // current user's position in real time,
@@ -42,39 +45,48 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    var initialCameraPosition = CameraPosition( target: sourceLocation,zoom: constants.cameraZoom );
+    var initialCameraPosition =
+        CameraPosition(target: sourceLocation, zoom: constants.cameraZoom);
     if (currentLocation != null) {
-      initialCameraPosition = CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: constants.cameraZoom);
+      initialCameraPosition = CameraPosition(
+          target: LatLng(currentLocation.latitude, currentLocation.longitude),
+          zoom: constants.cameraZoom);
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(constants.appTitle),
-        backgroundColor: Colors.green[700],
-      ),
-      body: GoogleMap(
-        myLocationEnabled: true,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: initialCameraPosition,
-        markers: _markers.values.toSet(),
-      )
-    );
+        drawer: CustomDrawer(),
+        appBar: AppBar(
+          title: Text(constants.appTitle),
+          backgroundColor: Colors.green[700],
+        ),
+        body: GoogleMap(
+          myLocationEnabled: true,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: initialCameraPosition,
+          markers: _markers.values.toSet(),
+        ));
   }
 
-
-  _onMapCreated(GoogleMapController controller) async{
+  _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
     final googleOffices = await locations.getGoogleOffices();
+
     setState(() {
       _markers.clear();
-      
+
       for (final office in googleOffices.offices) {
         var marker2 = Marker(
-          onTap: _callOtherRoute(context),
           markerId: MarkerId(office.name),
+          onTap: () {
+            print('clicou no marcador');
+          },
           position: LatLng(office.lat, office.lng),
           infoWindow: InfoWindow(
+            onTap: () {
+              print('CLICOU no INFOWINDOW');
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Restaurant(officename: office.name)));
+            },
             title: office.name,
             snippet: office.address,
           ),
@@ -95,13 +107,10 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
     // create a new CameraPosition instance
     // every time the location changes, so the camera
     // follows the pin as it moves with an animation
-    var cPosition = CameraPosition(zoom: constants.cameraZoom, target: LatLng(currentLocation.latitude, currentLocation.longitude));
+    var cPosition = CameraPosition(
+        zoom: constants.cameraZoom,
+        target: LatLng(currentLocation.latitude, currentLocation.longitude));
     final controller = await _controller.future;
     await controller.animateCamera(CameraUpdate.newCameraPosition(cPosition));
-  }
-
-  _callOtherRoute(context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context)=> Restaurant())); 
   }
 }
