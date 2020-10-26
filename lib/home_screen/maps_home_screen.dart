@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'locations.dart' as locations;
+import 'package:savefood/restaurant_details/restaurant.dart';
+import 'package:savefood/apis/locations.dart' as locations;
 import 'dart:async';
-import 'Constants/constants.dart' as constants;
-import 'menu/custom_drawer.dart';
-import 'restaurant.dart';
+import '../Constants/constants.dart' as constants;
+import '../menu/custom_drawer.dart';
 
 class MapsHomeScreen extends StatefulWidget {
   @override
@@ -57,7 +57,7 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
         drawer: CustomDrawer(),
         appBar: AppBar(
           title: Text(constants.appTitle),
-          backgroundColor: Colors.green[700],
+          //backgroundColor: Colors.green[700],
         ),
         body: GoogleMap(
           myLocationEnabled: true,

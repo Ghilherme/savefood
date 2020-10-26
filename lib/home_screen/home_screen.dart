@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'maps_home_screen.dart';
-import 'Constants/constants.dart' as constants;
+import 'package:savefood/Constants/constants.dart' as constants;
 
 class HomeScreen extends StatelessWidget {
   @override
