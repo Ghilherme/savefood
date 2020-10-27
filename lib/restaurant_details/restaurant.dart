@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:savefood/apis/establishments.dart';
 import 'package:savefood/restaurant_details/components/title_price_rating.dart';
 import 'package:savefood/Constants/constants.dart' as constants;
 import 'components/item_image.dart';
 import 'components/order_button.dart';
 
 class Restaurant extends StatelessWidget {
-  Restaurant({Key key, @required this.officename}) : super(key: key);
-  final String officename;
+  Restaurant({Key key, @required this.establishments}) : super(key: key);
+  final Establishments establishments;
 
   static String get officeName => null;
 
@@ -30,31 +31,31 @@ class Restaurant extends StatelessWidget {
           ],
         ),
         body: RestaurantDetail(
-          officename: officename,
+          establishments: establishments,
         ));
   }
 }
 
 class RestaurantDetail extends StatelessWidget {
-  RestaurantDetail({Key key, @required this.officename}) : super(key: key);
-  final String officename;
+  RestaurantDetail({Key key, @required this.establishments}) : super(key: key);
+  final Establishments establishments;
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
       ItemImage(
-        imgSrc: 'assets/images/marmitapng.png',
+        imgSrc: establishments.images[0],
       ),
       Expanded(
-        child: ItemInfo(officename: officename),
+        child: ItemInfo(establishments: establishments),
       )
     ]);
   }
 }
 
 class ItemInfo extends StatelessWidget {
-  const ItemInfo({Key key, @required this.officename}) : super(key: key);
-  final String officename;
+  const ItemInfo({Key key, @required this.establishments}) : super(key: key);
+  final Establishments establishments;
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +73,18 @@ class ItemInfo extends StatelessWidget {
       child: ListView(children: <Widget>[
         Column(
           children: [
-            shopeName(name: officename),
+            shopeName(
+                name:
+                    establishments.neighborhood + ' - ' + establishments.city),
             TitlePriceRating(
-              name: officename + ' cheese burger',
+              name: establishments.name,
               numOfReviews: 24,
               rating: 4,
               price: 15,
               onRatingChanged: (value) {},
             ),
             Text(
-              'Nowadays, making printed materials have become fast, easy and simple. If you want your promotional material to be an eye-catching object, you should make it colored. By way of using inkjet printer this is not hard to make. An inkjet printer is any printer that places extremely small droplets of ink onto paper to create an image.',
+              establishments.establishmentDescription,
               style: TextStyle(
                 height: 1.5,
               ),

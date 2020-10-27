@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:savefood/apis/establishments.dart';
 import 'package:savefood/restaurant_details/restaurant.dart';
 import 'package:savefood/apis/locations.dart' as locations;
 import 'dart:async';
@@ -28,10 +30,7 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
     super.initState();
     location = Location();
 
-    location.changeSettings(
-        interval: 100000,
-        accuracy: LocationAccuracy.BALANCED,
-        distanceFilter: 2);
+    location.changeSettings(interval: 100000, distanceFilter: 2);
     location.onLocationChanged().listen((LocationData cLoc) {
       // cLoc contains the lat and long of the
       // current user's position in real time,
@@ -75,6 +74,10 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
       _markers.clear();
 
       for (final office in googleOffices.offices) {
+        var distance = Geolocator.distanceBetween(office.lat, office.lng,
+                    currentLocation.latitude, currentLocation.longitude)
+                .floor() /
+            1000;
         var marker2 = Marker(
           markerId: MarkerId(office.name),
           onTap: () {
@@ -85,14 +88,41 @@ class _MapsHomeScreenState extends State<MapsHomeScreen> {
             onTap: () {
               print('CLICOU no INFOWINDOW');
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => Restaurant(officename: office.name)));
+                  //builder: (context) => Restaurant(establishments: office.name)));
+                  ));
             },
             title: office.name,
-            snippet: office.address,
+            snippet:
+                office.address + ' - (' + distance.toString() + ' km distante)',
           ),
         );
         final marker = marker2;
         _markers[office.name] = marker;
+      }
+      ;
+
+      for (final estbl in establishments) {
+        var distance = Geolocator.distanceBetween(estbl.lat, estbl.lng,
+                    currentLocation.latitude, currentLocation.longitude)
+                .floor() /
+            1000;
+        var mark = Marker(
+            markerId: MarkerId(estbl.id.toString()),
+            position: LatLng(estbl.lat, estbl.lng),
+            infoWindow: InfoWindow(
+              onTap: () {
+                print('CLICOU no INFOWINDOW');
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Restaurant(establishments: estbl)));
+              },
+              title: estbl.name,
+              snippet: estbl.address +
+                  ' - (' +
+                  distance.toString() +
+                  ' km distante)',
+            ));
+        final marker = mark;
+        _markers[estbl.name] = marker;
       }
     });
   }

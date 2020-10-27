@@ -30,7 +30,7 @@ dependencies:
   google_maps_flutter: ^0.5.27+3
   http: ^0.12.0+1
   json_serializable: ^3.3.0
-  geolocator: ^5.1.3
+  geolocator: ^6.1.1
   location: ^2.3.5
   smooth_star_rating: ^1.1.0
   flutter_svg: ^0.19.0
@@ -59,6 +59,11 @@ flutter:
      - assets/images/marmita.jpg
      - assets/images/marmitapng.png
      - assets/icons/bag.svg
+     - assets/images/sopa_padaria_brasileira.jpg
+     - assets/images/coxinha_padaria_brasileira.jpg
+     - assets/images/cantina_zelao.png
+     - assets/images/cantina_zelao_parmegiana.png
+     
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
